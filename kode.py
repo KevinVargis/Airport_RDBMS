@@ -48,7 +48,7 @@ while(True):   # main loop
                     break
                 else:
                     menu(ch)
-                    # print("lmao\n")
+                    # print("lmao")
                     tmp = input("Enter any key to CONTINUE>")
 
     except:
