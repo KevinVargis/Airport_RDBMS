@@ -5,6 +5,7 @@ import pymysql.cursors
 def menu(ch):
     """
     Function that maps helper functions to option entered
+    Add your function calls here
     """
 
     if(ch != 0):
@@ -40,7 +41,26 @@ while(True):   # main loop
         with con.cursor() as cur:
             while(1):
                 tmp = sp.call('clear', shell=True)
-                # Here taking example of Employee Mini-world
+                
+                '''
+                    do we add the menu options for select * passenger, flight etc?
+                '''
+                print("1.View all out-going flights on a particular day")
+                print("2.View all airlines with more than a given number of flights on a particular day")
+                print("3.Show city with most incoming flights")
+                print("4.Display passenger details search w/passenger name") 
+                '''
+                    should we do w/passport no instead?
+                '''
+                print("5.Display number of flights with below average number of passengers")
+                print("6.Show airline flying the highest number of minors")
+                print("7.Add a new passenger to a flight")
+                print("8.Change the meal type of a passenger")
+                '''
+                    given func. requirement is - Update – Change meal type
+                    we could do update passenger details instead also
+                '''
+                print("9.Delete passenger on a flight")
                 print("Enter 0 to Logout")
                 ch = int(input("Enter choice> "))
                 tmp = sp.call('clear', shell=True)
