@@ -217,6 +217,29 @@ def get_city_max():
         print("Failed to fetch data")
         print(">>>>>>>>>>>>>", e)
 
+def find_passenger():
+    row = {}
+    row["no"] = input("Enter Passport ID of required passenger: ")
+
+    query = "SELECT * FROM PASSENGER WHERE PASSPORT_ID = '%s'" % (row["no"])
+    # print(query)
+    try:
+        cur.execute(query)
+        result = cur.fetchone()
+        if result is not None:
+            print("%-20s%-20s%-20s%-20s%-20s%-20s" %("PASSPORT_ID", "TICKET_NUMBER", "GENDER", "FIRST_NAME", "LAST_NAME", "DOB"))
+        else:
+            print("No such entries found.")
+        # print("yo")
+        while result is not None:
+            print("%-20s%-20s%-20s%-20s%-20s%-20s" % (result['PASSPORT_ID'], result['TICKET_NUMBER'], result['GENDER'], result['FIRST_NAME'], result['LAST_NAME'], result['DOB']))
+            result = cur.fetchone()
+    except Exception as e:
+        print("Failed to fetch data")
+        print(">>>>>>>>>>>>>", e)
+
+    return  
+
 def menu(ch):
     """
     Function that maps helper functions to option entered
@@ -233,6 +256,8 @@ def menu(ch):
         get_airline_by_count()
     elif(ch == 3):
         get_city_max()
+    elif(ch == 4):
+        find_passenger()
     else:
         print("Error: Invalid Option")
 
@@ -271,7 +296,7 @@ while(True):   # main loop
                 print("1.View all out-going flights on a particular day")
                 print("2.View all airlines with more than a given number of flights on a particular day")
                 print("3.Show city with most incoming flights")
-                print("4.Display passenger details search w/passenger name") 
+                print("4.Display passenger details search using PASSPORT ID") 
                 '''
                     should we do w/passport no instead?
                 '''
