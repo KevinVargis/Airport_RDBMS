@@ -81,6 +81,62 @@ def change_meal_type():
             print(">>>>",e)
     return
 
+def delete_passenger():
+    row = {}
+    row["p_id"] = input("Enter Passport Id of Passenger: ")
+    query1="SELECT * FROM PASSENGER WHERE PASSPORT_ID = '%s'"%(row["p_id"])
+    cur.execute(query1)
+    count=cur.rowcount
+
+    if count==0:
+        print
+        print("Given Passenger Doesn't Currently Exist")
+        print 
+        return   
+
+    query="DELETE FROM FLIES_ON WHERE PASSPORT_ID='%s'"%(row["p_id"])
+    try:
+        cur.execute(query)
+        con.commit()
+        print("Flight Emptied\n")
+    except Exception as e:
+        con.rollback()
+        print("Flight Emptying Failed\n")
+        print(">>>>",e)
+
+    query="DELETE FROM LUGGAGE_BAG WHERE PASSPORT_ID='%s'"%(row["p_id"])
+    try:
+        cur.execute(query)
+        con.commit()
+        print("Luggage Deleted\n")
+    except Exception as e:
+        con.rollback()
+        print("Luggage Deletion Failed\n")
+        print(">>>>",e)
+
+    query="DELETE FROM SUPPLIES_TO WHERE PASSPORT_ID='%s'"%(row["p_id"])
+    try:
+        cur.execute(query)
+        con.commit()
+        print("Meal Deleted\n")
+    except Exception as e:
+        con.rollback()
+        print("Supplies_To Deletion Failed\n")
+        print(">>>>",e)   
+
+    query="DELETE FROM PASSENGER WHERE PASSPORT_ID='%s'"%(row["p_id"])
+    try:
+        cur.execute(query)
+        con.commit()
+        print("Passenger Deleted\n")
+    except Exception as e:
+        con.rollback()
+        print("Pasenger Deletion Failed\n")
+        print(">>>>",e)    
+
+    return      
+
+
 def menu(ch):
     """
     Function that maps helper functions to option entered
@@ -89,6 +145,8 @@ def menu(ch):
 
     if(ch == 8):
         change_meal_type()
+    if(ch == 9):
+        delete_passenger()
     else:
         print("Error: Invalid Option")
 
