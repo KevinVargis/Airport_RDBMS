@@ -134,7 +134,68 @@ def delete_passenger():
         print("Pasenger Deletion Failed\n")
         print(">>>>",e)    
 
-    return      
+    return    
+
+def get_outgoing_flight():
+    try:
+        # Takes emplyee details as input
+        row = {}
+        row["date"] = input("Enter required date in YYYY-MM-DD format: ")
+        row["city"] = "Hyderabad"
+
+        query = "SELECT * FROM FLIGHT WHERE DATE = '%s' AND DESTINATION <> '%s'" % (
+            row["date"], row["city"])
+
+        # print(query)
+        cur.execute(query)
+        result = cur.fetchone()
+        if result is not None:
+            print("FLIGHT_NO\tAIRLINE\t\tDESTINATION\tDATE\t\tSLOT\tTAKE_OFF_LOCATION\tBOARDING_TIME")
+        else:
+            print("No such entries found.")
+        # print("yo")
+        while result is not None:
+            # no = tup[0]
+            # print("%s\t" % (result['FLIGHT_NO']))
+            print("%s\t%s\t%s\t\t%s\t%s\t%s\t\t%s\t" % (result['FLIGHT_NO'], result['AIRLINE'], result['DESTINATION'], result['DATE'], result['SLOT'], result['TAKE_OFF_LOCATION'], result['BOARDING_TIME']))
+            result = cur.fetchone()
+        # con.commit()
+
+    except Exception as e:
+        print("Failed to fetch data")
+        print(">>>>>>>>>>>>>", e)
+
+    return
+
+def get_airline_by_count():
+    row = {}
+    row["date"] = input("Enter required date in YYYY-MM-DD format: ")
+    row["count"] = input("Enter count above which you want to see flights: ")
+
+    if not row["count"].isnumeric():
+        print("Failed to fetch data")
+        print(">>>>>>>>>>>>>", row["count"], "is not a numeric value")
+        return
+    query = "SELECT AIRLINE, COUNT(*) AS COUNT FROM FLIGHT WHERE DATE = '%s' GROUP BY AIRLINE HAVING COUNT(*) > '%s'" % (row["date"], row["count"])
+    # print(query)
+    try:
+        cur.execute(query)
+        result = cur.fetchone()
+        if result is not None:
+            print("FLIGHT_NO\tCOUNT")
+        else:
+            print("No such entries found.")
+        # print("yo")
+        while result is not None:
+            # no = tup[0]
+            # print("%s\t" % (result['AIRLINE']))
+            print("%s\t%s\t" % (result['AIRLINE'], result['COUNT']))
+            result = cur.fetchone()
+    except Exception as e:
+        print("Failed to fetch data")
+        print(">>>>>>>>>>>>>", e)
+
+    return  
 
 
 def menu(ch):
@@ -145,8 +206,12 @@ def menu(ch):
 
     if(ch == 8):
         change_meal_type()
-    if(ch == 9):
+    elif(ch == 9):
         delete_passenger()
+    elif(ch == 1):
+        get_outgoing_flight()
+    elif(ch == 2):
+        get_airline_by_count()
     else:
         print("Error: Invalid Option")
 
