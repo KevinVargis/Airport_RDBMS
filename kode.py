@@ -197,6 +197,25 @@ def get_airline_by_count():
 
     return  
 
+def get_city_max():
+    query = "SELECT DESTINATION AS CITY, COUNT(*) AS FLIGHTS FROM FLIGHT GROUP BY CITY ORDER BY FLIGHTS DESC LIMIT 1"
+    # print(query)
+    try:
+        cur.execute(query)
+        result = cur.fetchone()
+        if result is not None:
+            print("CITY\t\tFLIGHTS")
+        else:
+            print("No such entries found.")
+        # print("yo")
+        while result is not None:
+            # no = tup[0]
+            # print("%s\t" % (result['AIRLINE']))
+            print("%s\t%s\t" % (result['CITY'], result['FLIGHTS']))
+            result = cur.fetchone()
+    except Exception as e:
+        print("Failed to fetch data")
+        print(">>>>>>>>>>>>>", e)
 
 def menu(ch):
     """
@@ -212,6 +231,8 @@ def menu(ch):
         get_outgoing_flight()
     elif(ch == 2):
         get_airline_by_count()
+    elif(ch == 3):
+        get_city_max()
     else:
         print("Error: Invalid Option")
 
