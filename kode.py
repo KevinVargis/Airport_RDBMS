@@ -5,6 +5,7 @@ import random
 
 
 caterer_ids =["148134290F","1B01EF5928","25C3698824","3692E7305E","48BB559AEA","72E84FE555","90EEF31A88","D08264D579","DD05ABD495","F97EDBB85C"]
+ticket_nos=["6CFFABA","6A89913","7386FCC","814E10","8C0083","067D26C","6EF7355","3F529C9","827D4C6","7DAFD","27D01A5","19642C1","01284B1","6922DD","D4DB841","A0F3421","B887052B0","9148F6","3B2CC2C","0C8F4F3","E62DFB","10F3FF0","F3FF46"]
 
 
 def change_meal_type():
@@ -61,7 +62,8 @@ def change_meal_type():
         query="SELECT MAX(MEAL_NO) FROM MEAL_PACKAGE WHERE EMPLOYEE_ID='%s'"%(caterer_ids[caterer_no])
         cur.execute(query)
         meal_no=cur.fetchone()
-        meal_no=meal_no+1
+        meal_no=meal_no["MEAL_NO"]
+        meal_no+1
         try:
             query="INSERT INTO MEAL_PACKAGE (EMPLOYEE_ID,MEAL_NO,CLASS,TYPE) VALUES ('%s' ,'%s','%s','%s') "%(caterer_ids[caterer_no],meal_no,row["class"],row["type"])
             cur.execute(query)
@@ -134,15 +136,135 @@ def delete_passenger():
         print("Pasenger Deletion Failed\n")
         print(">>>>",e)    
 
-    return      
+    return  
+
+def luggage_add(no,jk):
+    print("Volume of Your Luggage Must be less than 30 sq units")
+    l=input("Enter Length: ")
+    b=input("Enter Breadth: ")
+    h=input("Enter Height: ")
+    if l*b*h>30:
+        luggage_add(no,jk)
+    query="INSERT INTO LUGGAGE_BAG(PASSPORT_ID,BAG_NO,LENGTH,BREADTH,HEIGHT) VALUES ('%s','%s','%s','%s','%s')"%(jk,no,l,b,h)
+    try:
+        cur.execute(query)
+        con.commit()
+        return
+    except Exception as e:
+        con.rollback()
+        print("Luggage Insertion Failed\n")
+        print(">>>>",e) 
+    
+    return  
+
+def add_pasenger():
+    row={}
+    ticket_count=0
+    dest=input("Enter Destination: ")
+    start=input("Enter Start Location: ")
+    dest=dest.lower()
+    dest=dest.capitalize()
+    start=start.lower()
+    start=start.capitalize()
+
+    query="SELECT * FROM FLIGHT WHERE TAKE_OFF_LOCATION='%s' AND DESTINATION='%s'"%(start,dest)    
+    cur.execute(query)
+    count=cur.rowcount
+    if count==0:
+        print("No Flight meets your requirements :(\n")
+        return
+
+    a=cur.fetchone()
+
+    f_no=a["FLIGHT_NO"]
+    b_time=a["BOARDING_TIME"]
+    row["p_id"]=input("Enter Your Passport ID: ")
+    f_name=input("Enter First Name: ")
+    l_name = input("Enter Last Name: ")
+    gender = input("Enter Gender: ")
+    gender=gender.upper()
+    dob = input(" Enter DoB(YYYY-MM-DD): ")
+
+    try:
+        query="INSERT INTO PASSENGER (PASSPORT_ID,TICKET_NUMBER,GENDER,FIRST_NAME,LAST_NAME,DOB) VALUES ('%s','%s','%s','%s','%s','%s')"%(row["p_id"],ticket_nos[ticket_count],gender,f_name,l_name,dob)
+        ticket_count=ticket_count+1
+        cur.execute(query)
+        con.commit()
+    except Exception as e:
+        con.rollback()
+        print("Passenger Insertion Failed\n")
+        print(">>>>",e)
+        return
+
+    try:
+        query="INSERT INTO FLIES_ON (PASSPORT_ID,FLIGHT_NO) VALUES('%s','%s')"%(row["p_id"],f_no)
+        cur.execute(query)
+        con.commit()
+    except Exception as e:
+        con.rollback()
+        print("Flies_On Insertion Failed\n")
+        print(">>>>",e)
+
+    print("Enter Your Meal Preferences as Follows")
+    print
+    row["type"]=input("VEG/NON-VEG: ")
+    row["type"] = row["type"].upper()
+
+    row["class"] = input("LUXURY/ECONOMY: ")
+    row["class"] = row["class"].upper()
+
+    print(row["class"])
+    print(row["type"])
+    if (row["type"]!="VEG" and row["type"]!="NON_VEG") or (row["class"]!="LUXURY" and row["type"]!="ECONOMY"):
+        print("Invalid Inputs, Please restrict your choice to above options next time")
+        print
+        return 
+
+    caterer_no=random.randint(0,9)
+    
+    query="SELECT MAX(MEAL_NO) FROM MEAL_PACKAGE WHERE EMPLOYEE_ID='%s'"%(caterer_ids[caterer_no])
+    cur.execute(query)
+    meal_no=cur.fetchone()
+    m_no=meal_no["MAX(MEAL_NO)"]
+    m_no=m_no+1
+    try:
+        query="INSERT INTO MEAL_PACKAGE (EMPLOYEE_ID,MEAL_NO,CLASS,TYPE) VALUES ('%s' ,'%s','%s','%s') "%(caterer_ids[caterer_no],m_no,row["class"],row["type"])
+        cur.execute(query)
+        con.commit()
+    except Exception as e:
+        con.rollback()
+        print("Meal Package Insertion Failed\n")
+        print(">>>>",e)
+        
+    try:
+        query="INSERT INTO SUPPLIES_TO (EMPLOYEE_ID,MEAL_NO,PASSPORT_ID) VALUES ('%s','%s','%s')" %(caterer_ids[caterer_no],m_no,row["p_id"])
+        cur.execute(query)
+        con.commit()
+    except Exception as e:
+        con.rollback()
+        print("Supplies_To Insertion Failed\n")
+        print(">>>>",e)
+
+    bag_no=input("How many bags do you want to register?: ")
+    for x in range(1,bag_no+1):
+        luggage_add(x,row["p_id"])
+
+    return
+    
+    
+
+    
+                
 
 
+    
 def menu(ch):
     """
     Function that maps helper functions to option entered
     Add your function calls here
     """
-
+    if(ch == 7):
+        add_pasenger()
     if(ch == 8):
         change_meal_type()
     if(ch == 9):
