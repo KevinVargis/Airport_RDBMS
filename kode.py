@@ -240,6 +240,122 @@ def find_passenger():
 
     return  
 
+def get_below_avg():
+    query = "CREATE VIEW YAM AS SELECT FLIGHT_NO, COUNT(*) AS YO FROM FLIES_ON GROUP BY FLIGHT_NO"
+    # print(query)
+    try:
+        cur.execute(query)
+    except Exception as e:
+        print("Failed to fetch data")
+        print(">>>>>>>>>>>>>", e)
+        return
+
+    query = "CREATE VIEW HUE AS SELECT FLIGHT_NO, COUNT(*) AS YO FROM FLIES_ON GROUP BY FLIGHT_NO HAVING  (SELECT AVG(YO) FROM YAM) > YO"
+    try:
+        cur.execute(query)
+    except Exception as e:
+        print("Failed to fetch data")
+        print(">>>>>>>>>>>>>", e)
+        return
+    
+    query = "SELECT COUNT(*) FROM HUE"
+    try:
+        cur.execute(query)
+        result = cur.fetchone()
+        if result is not None:
+            print("NUMBER_OF_FLIGHTS")
+        else:
+            print("No such entries found.")
+        # print("yo")
+        while result is not None:
+            # no = tup[0]
+            # print("%s\t" % (result['AIRLINE']))
+            print("%s\t" % (result['COUNT(*)']))
+            result = cur.fetchone()
+    except Exception as e:
+        print("Failed to fetch data")
+        print(">>>>>>>>>>>>>", e)
+        return
+
+    query = "DROP VIEW HUE"
+    try:
+        cur.execute(query)
+    except Exception as e:
+        print("Failed to drop temporary table")
+        print(">>>>>>>>>>>>>", e)
+        return
+
+    query = "DROP VIEW YAM"
+    try:
+        cur.execute(query)
+    except Exception as e:
+        print("Failed to drop temporary table")
+        print(">>>>>>>>>>>>>", e)
+        return
+
+def get_max_minors():
+    query = "CREATE VIEW YO AS SELECT FLIGHT_NO, AGE_GROUP FROM FLIES_ON AS F, PASSENGER AS P WHERE F.PASSPORT_ID = P.PASSPORT_ID"
+    # print(query)
+    try:
+        cur.execute(query)
+    except Exception as e:
+        print("Failed to fetch data")
+        print(">>>>>>>>>>>>>", e)
+        return
+
+    query = "CREATE VIEW YAM AS SELECT * FROM YO WHERE AGE_GROUP = 'MINOR'"
+    try:
+        cur.execute(query)
+    except Exception as e:
+        print("Failed to fetch data")
+        print(">>>>>>>>>>>>>", e)
+        return
+
+    query = "CREATE VIEW F AS SELECT FLIGHT_NO, COUNT(*) AS COUNT FROM YAM GROUP BY FLIGHT_NO"
+    try:
+        cur.execute(query)
+    except Exception as e:
+        print("Failed to fetch data")
+        print(">>>>>>>>>>>>>", e)
+        return
+
+    query = "CREATE VIEW DED AS SELECT AIRLINE, COUNT FROM FLIGHT, F WHERE FLIGHT.FLIGHT_NO = F.FLIGHT_NO"
+    try:
+        cur.execute(query)
+    except Exception as e:
+        print("Failed to fetch data")
+        print(">>>>>>>>>>>>>", e)
+        return
+    
+    query = "SELECT AIRLINE, SUM(COUNT) FROM DED GROUP BY AIRLINE ORDER BY SUM(COUNT) DESC LIMIT 1"
+    try:
+        cur.execute(query)
+        result = cur.fetchone()
+        if result is not None:
+            print("AIRLINE\t\tNO_OF_MINORS")
+        else:
+            print("No such entries found.")
+        # print("yo")
+        while result is not None:
+            # no = tup[0]
+            # print("%s\t" % (result['AIRLINE']))
+            print("%s\t%s" % (result['AIRLINE'], result['SUM(COUNT)']))
+            result = cur.fetchone()
+    except Exception as e:
+        print("Failed to fetch data")
+        print(">>>>>>>>>>>>>", e)
+        return
+
+    query = "DROP VIEW YAM, YO, F, DED"
+    try:
+        cur.execute(query)
+    except Exception as e:
+        print("Failed to drop temporary table")
+        print(">>>>>>>>>>>>>", e)
+        return
+
+    
+        
 def menu(ch):
     """
     Function that maps helper functions to option entered
@@ -258,6 +374,10 @@ def menu(ch):
         get_city_max()
     elif(ch == 4):
         find_passenger()
+    elif(ch == 5):
+        get_below_avg()
+    elif(ch == 6):
+        get_max_minors()
     else:
         print("Error: Invalid Option")
 
