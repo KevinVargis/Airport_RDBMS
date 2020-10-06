@@ -38,7 +38,7 @@ def change_meal_type():
     row["class"] = input("LUXURY/ECONOMY: ")
     row["class"] = row["class"].upper()
 
-    if (row["type"]!="VEG" and row["type"]!="NON_VEG") or (row["class"]!="LUXURY" and row["type"]!="ECONOMY"):
+    if (row["type"]!="VEG" and row["type"]!="NON-VEG") or (row["class"]!="LUXURY" and row["type"]!="ECONOMY"):
         print("Invalid Inputs, Please restrict your choice to above options next time")
         print
         return
@@ -184,7 +184,7 @@ def get_airline_by_count():
         cur.execute(query)
         result = cur.fetchone()
         if result is not None:
-            print("FLIGHT_NO\tCOUNT")
+            print("AIRLINE\tCOUNT")
         else:
             print("No such entries found.")
         # print("yo")
@@ -288,7 +288,7 @@ def add_pasenger():
     cur.execute(query)
     count=cur.rowcount
     if count==0:
-        print("No Flight meets your requirements :(\n")
+        print("No Flight meets your requirements :(")
         return
 
     a=cur.fetchone()
