@@ -350,7 +350,7 @@ def add_pasenger():
     row["class"] = input("LUXURY/ECONOMY: ")
     row["class"] = row["class"].upper()
 
-    if (row["type"]!="VEG" and row["type"]!="NON_VEG") or (row["class"]!="LUXURY" and row["type"]!="ECONOMY"):
+    if (row["type"]!="VEG" and row["type"]!="NON-VEG") or (row["class"]!="LUXURY" and row["type"]!="ECONOMY"):
         print("Invalid Inputs, Please restrict your choice to above options next time")
         print
         return 
