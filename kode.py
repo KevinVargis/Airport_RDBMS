@@ -418,7 +418,21 @@ def get_below_avg():
         print(">>>>>>>>>>>>>", e)
         return
     
-    query = "SELECT COUNT(*) FROM HUE"
+    query = "SELECT AVG(YO) FROM YAM"
+    try:
+        cur.execute(query)
+        result = cur.fetchone()
+        while result is not None:
+            # no = tup[0]
+            # print("%s\t" % (result['AIRLINE']))
+            print("Average no. of passengers per flight - %s\t" % (result['AVG(YO)']))
+            result = cur.fetchone()
+    except Exception as e:
+        print("Failed to fetch data")
+        print(">>>>>>>>>>>>>", e)
+        return
+
+    query = "SELECT HUE.FLIGHT_NO, AIRLINE, DESTINATION, DATE, SLOT, TAKE_OFF_LOCATION, BOARDING_TIME, YO AS PASSENGER_COUNT FROM HUE, FLIGHT WHERE HUE.FLIGHT_NO = FLIGHT.FLIGHT_NO"
     try:
         cur.execute(query)
         result = cur.fetchone()
