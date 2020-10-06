@@ -5,7 +5,9 @@ The considerations, constraints and EER diagrams are provided in the prior docum
 The data stored can be queried and updated through `mysql`, and the functional requirements given in the earlier phases have been implemented with python to provide a simple CLI-based menu interface to run the queries.
 
 **Instructions**
+
 This is on the assumption that the user has already installed the MySQL client.
+
 - Enter the folder
 - Open the MySQL CLI
 - run `source DNA_PROJECT.sql`
