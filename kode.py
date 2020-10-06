@@ -59,28 +59,31 @@ def change_meal_type():
     
     else:
         caterer_no=random.randint(0,9)
+    
         query="SELECT MAX(MEAL_NO) FROM MEAL_PACKAGE WHERE EMPLOYEE_ID='%s'"%(caterer_ids[caterer_no])
         cur.execute(query)
         meal_no=cur.fetchone()
-        meal_no=meal_no["MEAL_NO"]
-        meal_no+1
+        m_no=meal_no["MAX(MEAL_NO)"]
+        m_no=m_no+1
         try:
-            query="INSERT INTO MEAL_PACKAGE (EMPLOYEE_ID,MEAL_NO,CLASS,TYPE) VALUES ('%s' ,'%s','%s','%s') "%(caterer_ids[caterer_no],meal_no,row["class"],row["type"])
+            query="INSERT INTO MEAL_PACKAGE (EMPLOYEE_ID,MEAL_NO,CLASS,TYPE) VALUES ('%s' ,'%s','%s','%s') "%(caterer_ids[caterer_no],m_no,row["class"],row["type"])
             cur.execute(query)
             con.commit()
+            print("Meal Confirmed\n")
         except Exception as e:
             con.rollback()
             print("Meal Package Insertion Failed\n")
             print(">>>>",e)
         
         try:
-            query="INSERT INTO SUPPLIES_TO (EMPLOYEE_ID,MEAL_NO,PASSPORT_ID) VALUES (%s' ,'%s','%s')" %(caterer_ids[caterer_no],meal_no,row["p_id"])
+            query="INSERT INTO SUPPLIES_TO (EMPLOYEE_ID,MEAL_NO,PASSPORT_ID) VALUES ('%s','%s','%s')" %(caterer_ids[caterer_no],m_no,row["p_id"])
             cur.execute(query)
             con.commit()
         except Exception as e:
             con.rollback()
             print("Supplies_To Insertion Failed\n")
             print(">>>>",e)
+
     return
 
 def delete_passenger():
@@ -350,36 +353,38 @@ def add_pasenger():
     row["class"] = input("LUXURY/ECONOMY: ")
     row["class"] = row["class"].upper()
 
+    do_meal=1
     if (row["type"]!="VEG" and row["type"]!="NON-VEG") or (row["class"]!="LUXURY" and row["type"]!="ECONOMY"):
-        print("Invalid Inputs, Please restrict your choice to above options next time")
+        print("Invalid Inputs, Please restrict your choice to above options next time, You can still add a meal later")
         print
-        return 
+        do_meal=0
 
-    caterer_no=random.randint(0,9)
+    if do_meal!=0:
+        caterer_no=random.randint(0,9)
     
-    query="SELECT MAX(MEAL_NO) FROM MEAL_PACKAGE WHERE EMPLOYEE_ID='%s'"%(caterer_ids[caterer_no])
-    cur.execute(query)
-    meal_no=cur.fetchone()
-    m_no=meal_no["MAX(MEAL_NO)"]
-    m_no=m_no+1
-    try:
-        query="INSERT INTO MEAL_PACKAGE (EMPLOYEE_ID,MEAL_NO,CLASS,TYPE) VALUES ('%s' ,'%s','%s','%s') "%(caterer_ids[caterer_no],m_no,row["class"],row["type"])
+        query="SELECT MAX(MEAL_NO) FROM MEAL_PACKAGE WHERE EMPLOYEE_ID='%s'"%(caterer_ids[caterer_no])
         cur.execute(query)
-        con.commit()
-        print("Meal Confirmed\n")
-    except Exception as e:
-        con.rollback()
-        print("Meal Package Insertion Failed\n")
-        print(">>>>",e)
+        meal_no=cur.fetchone()
+        m_no=meal_no["MAX(MEAL_NO)"]
+        m_no=m_no+1
+        try:
+            query="INSERT INTO MEAL_PACKAGE (EMPLOYEE_ID,MEAL_NO,CLASS,TYPE) VALUES ('%s' ,'%s','%s','%s') "%(caterer_ids[caterer_no],m_no,row["class"],row["type"])
+            cur.execute(query)
+            con.commit()
+            print("Meal Confirmed\n")
+        except Exception as e:
+            con.rollback()
+            print("Meal Package Insertion Failed\n")
+            print(">>>>",e)
         
-    try:
-        query="INSERT INTO SUPPLIES_TO (EMPLOYEE_ID,MEAL_NO,PASSPORT_ID) VALUES ('%s','%s','%s')" %(caterer_ids[caterer_no],m_no,row["p_id"])
-        cur.execute(query)
-        con.commit()
-    except Exception as e:
-        con.rollback()
-        print("Supplies_To Insertion Failed\n")
-        print(">>>>",e)
+        try:
+            query="INSERT INTO SUPPLIES_TO (EMPLOYEE_ID,MEAL_NO,PASSPORT_ID) VALUES ('%s','%s','%s')" %(caterer_ids[caterer_no],m_no,row["p_id"])
+            cur.execute(query)
+            con.commit()
+        except Exception as e:
+            con.rollback()
+            print("Supplies_To Insertion Failed\n")
+            print(">>>>",e)
 
     try:
         bag_no=int(input("How many bags do you want to register?: "))
@@ -598,7 +603,7 @@ while(True):   # main loop
                 print("5.Display number of flights with below average number of passengers")
                 print("6.Show airline flying the highest number of minors")
                 print("7.Add a new passenger to a flight")
-                print("8.Change the meal type of a passenger")
+                print("8.Change the meal type of a passenger or Add a Meal")
                 '''
                     given func. requirement is - Update – Change meal type
                     we could do update passenger details instead also
