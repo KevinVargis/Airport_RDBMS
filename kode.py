@@ -38,7 +38,7 @@ def change_meal_type():
     row["class"] = input("LUXURY/ECONOMY: ")
     row["class"] = row["class"].upper()
 
-    if (row["type"]!="VEG" and row["type"]!="NON-VEG") or (row["class"]!="LUXURY" and row["type"]!="ECONOMY"):
+    if (row["type"]!="VEG" and row["type"]!="NON_VEG") or (row["class"]!="LUXURY" and row["type"]!="ECONOMY"):
         print("Invalid Inputs, Please restrict your choice to above options next time")
         print
         return
@@ -59,31 +59,28 @@ def change_meal_type():
     
     else:
         caterer_no=random.randint(0,9)
-    
         query="SELECT MAX(MEAL_NO) FROM MEAL_PACKAGE WHERE EMPLOYEE_ID='%s'"%(caterer_ids[caterer_no])
         cur.execute(query)
         meal_no=cur.fetchone()
-        m_no=meal_no["MAX(MEAL_NO)"]
-        m_no=m_no+1
+        meal_no=meal_no["MEAL_NO"]
+        meal_no+1
         try:
-            query="INSERT INTO MEAL_PACKAGE (EMPLOYEE_ID,MEAL_NO,CLASS,TYPE) VALUES ('%s' ,'%s','%s','%s') "%(caterer_ids[caterer_no],m_no,row["class"],row["type"])
+            query="INSERT INTO MEAL_PACKAGE (EMPLOYEE_ID,MEAL_NO,CLASS,TYPE) VALUES ('%s' ,'%s','%s','%s') "%(caterer_ids[caterer_no],meal_no,row["class"],row["type"])
             cur.execute(query)
             con.commit()
-            print("Meal Confirmed\n")
         except Exception as e:
             con.rollback()
             print("Meal Package Insertion Failed\n")
             print(">>>>",e)
         
         try:
-            query="INSERT INTO SUPPLIES_TO (EMPLOYEE_ID,MEAL_NO,PASSPORT_ID) VALUES ('%s','%s','%s')" %(caterer_ids[caterer_no],m_no,row["p_id"])
+            query="INSERT INTO SUPPLIES_TO (EMPLOYEE_ID,MEAL_NO,PASSPORT_ID) VALUES (%s' ,'%s','%s')" %(caterer_ids[caterer_no],meal_no,row["p_id"])
             cur.execute(query)
             con.commit()
         except Exception as e:
             con.rollback()
             print("Supplies_To Insertion Failed\n")
             print(">>>>",e)
-
     return
 
 def delete_passenger():
@@ -187,7 +184,7 @@ def get_airline_by_count():
         cur.execute(query)
         result = cur.fetchone()
         if result is not None:
-            print("AIRLINE\tCOUNT")
+            print("FLIGHT_NO\tCOUNT")
         else:
             print("No such entries found.")
         # print("yo")
@@ -291,7 +288,7 @@ def add_pasenger():
     cur.execute(query)
     count=cur.rowcount
     if count==0:
-        print("No Flight meets your requirements :(")
+        print("No Flight meets your requirements :(\n")
         return
 
     a=cur.fetchone()
@@ -353,38 +350,36 @@ def add_pasenger():
     row["class"] = input("LUXURY/ECONOMY: ")
     row["class"] = row["class"].upper()
 
-    do_meal=1
-    if (row["type"]!="VEG" and row["type"]!="NON-VEG") or (row["class"]!="LUXURY" and row["type"]!="ECONOMY"):
-        print("Invalid Inputs, Please restrict your choice to above options next time, You can still add a meal later")
+    if (row["type"]!="VEG" and row["type"]!="NON_VEG") or (row["class"]!="LUXURY" and row["type"]!="ECONOMY"):
+        print("Invalid Inputs, Please restrict your choice to above options next time")
         print
-        do_meal=0
+        return 
 
-    if do_meal!=0:
-        caterer_no=random.randint(0,9)
+    caterer_no=random.randint(0,9)
     
-        query="SELECT MAX(MEAL_NO) FROM MEAL_PACKAGE WHERE EMPLOYEE_ID='%s'"%(caterer_ids[caterer_no])
+    query="SELECT MAX(MEAL_NO) FROM MEAL_PACKAGE WHERE EMPLOYEE_ID='%s'"%(caterer_ids[caterer_no])
+    cur.execute(query)
+    meal_no=cur.fetchone()
+    m_no=meal_no["MAX(MEAL_NO)"]
+    m_no=m_no+1
+    try:
+        query="INSERT INTO MEAL_PACKAGE (EMPLOYEE_ID,MEAL_NO,CLASS,TYPE) VALUES ('%s' ,'%s','%s','%s') "%(caterer_ids[caterer_no],m_no,row["class"],row["type"])
         cur.execute(query)
-        meal_no=cur.fetchone()
-        m_no=meal_no["MAX(MEAL_NO)"]
-        m_no=m_no+1
-        try:
-            query="INSERT INTO MEAL_PACKAGE (EMPLOYEE_ID,MEAL_NO,CLASS,TYPE) VALUES ('%s' ,'%s','%s','%s') "%(caterer_ids[caterer_no],m_no,row["class"],row["type"])
-            cur.execute(query)
-            con.commit()
-            print("Meal Confirmed\n")
-        except Exception as e:
-            con.rollback()
-            print("Meal Package Insertion Failed\n")
-            print(">>>>",e)
+        con.commit()
+        print("Meal Confirmed\n")
+    except Exception as e:
+        con.rollback()
+        print("Meal Package Insertion Failed\n")
+        print(">>>>",e)
         
-        try:
-            query="INSERT INTO SUPPLIES_TO (EMPLOYEE_ID,MEAL_NO,PASSPORT_ID) VALUES ('%s','%s','%s')" %(caterer_ids[caterer_no],m_no,row["p_id"])
-            cur.execute(query)
-            con.commit()
-        except Exception as e:
-            con.rollback()
-            print("Supplies_To Insertion Failed\n")
-            print(">>>>",e)
+    try:
+        query="INSERT INTO SUPPLIES_TO (EMPLOYEE_ID,MEAL_NO,PASSPORT_ID) VALUES ('%s','%s','%s')" %(caterer_ids[caterer_no],m_no,row["p_id"])
+        cur.execute(query)
+        con.commit()
+    except Exception as e:
+        con.rollback()
+        print("Supplies_To Insertion Failed\n")
+        print(">>>>",e)
 
     try:
         bag_no=int(input("How many bags do you want to register?: "))
@@ -395,15 +390,6 @@ def add_pasenger():
         print(">>>>",e)
 
     return
-
-
-    
-    
-
-    
-                
-
-
     
 def get_below_avg():
     query = "CREATE VIEW YAM AS SELECT FLIGHT_NO, COUNT(*) AS YO FROM FLIES_ON GROUP BY FLIGHT_NO"
@@ -442,15 +428,15 @@ def get_below_avg():
         cur.execute(query)
         result = cur.fetchone()
         if result is not None:
-            print("NUMBER_OF_FLIGHTS")
+            print("FLIGHT_NO\tAIRLINE\t\tDESTINATION\tDATE\t\tSLOT\tTAKE_OFF_LOCATION\tBOARDING_TIME\t\tPASSENGER_COUNT")
+            print("")
         else:
             print("No such entries found.")
         # print("yo")
         while result is not None:
-            # no = tup[0]
-            # print("%s\t" % (result['AIRLINE']))
-            print("%s\t" % (result['COUNT(*)']))
+            print("%s\t%s\t%s\t%s\t%s\t%-24s%s\t%s" % (result['FLIGHT_NO'], result['AIRLINE'], result['DESTINATION'], result['DATE'], result['SLOT'], result['TAKE_OFF_LOCATION'], result['BOARDING_TIME'], result['PASSENGER_COUNT']))
             result = cur.fetchone()
+            print("")
     except Exception as e:
         print("Failed to fetch data")
         print(">>>>>>>>>>>>>", e)
@@ -603,7 +589,7 @@ while(True):   # main loop
                 print("5.Display number of flights with below average number of passengers")
                 print("6.Show airline flying the highest number of minors")
                 print("7.Add a new passenger to a flight")
-                print("8.Change the meal type of a passenger or Add a Meal")
+                print("8.Change the meal type of a passenger")
                 '''
                     given func. requirement is - Update – Change meal type
                     we could do update passenger details instead also
