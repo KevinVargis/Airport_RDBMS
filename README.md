@@ -14,3 +14,7 @@ and are case insensitive.
 
 **Delete passenger:**
 Deletes luggage , meal details of passenger as well as removes the passenger from its current flight provided passenger exists in database.
+
+**Add Passenger:**
+Checks if flight with given start and end point exists in system, and if flight is not full (<150 current passengers), a ticket number (unique) is assigned , meal preferences assked and a meal booked, and luggage added if required with the constraint that each bag <=30 sq units in volume
+Passenger details are also taken in as input and stored

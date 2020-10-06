@@ -295,6 +295,18 @@ def add_pasenger():
 
     f_no=a["FLIGHT_NO"]
     b_time=a["BOARDING_TIME"]
+    airline=a["AIRLINE"]
+    
+    try:
+        query="SELECT * FROM FLIES_ON WHERE FLIGHT_NO = '%s'"%(f_no)
+        cur.execute(query)
+        count=cur.rowcount
+        if count==150:
+            print("The flight is already full. Sorry for the inconveniance")
+            return
+    except Exception as e:
+        print(">>>>>>",e)
+
     row["p_id"]=input("Enter Your Passport ID: ")
     f_name=input("Enter First Name: ")
     l_name = input("Enter Last Name: ")
@@ -323,7 +335,7 @@ def add_pasenger():
         query="INSERT INTO FLIES_ON (PASSPORT_ID,FLIGHT_NO) VALUES('%s','%s')"%(row["p_id"],f_no)
         cur.execute(query)
         con.commit()
-        print ("Flight:%s\n With Ticket_No:%s \n Boarding Time:%s Confirmed\n" %(f_no,ticket_nos[ticket_count-1],b_time))
+        print ("%s Flight:%s\n With Ticket_No:%s \n Boarding Time:%s Confirmed\n" %(airline,f_no,ticket_nos[ticket_count-1],b_time))
 
     except Exception as e:
         con.rollback()
