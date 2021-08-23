@@ -1,7 +1,7 @@
 ## Model Relational Database Management System
 
 This example RDBMS is based on the scenario of a hypothetical airport based in Hyderabad.
-The considerations, constraints and EER diagrams are provided in the prior documents. The database has been populated with some example values to demonstrate the working of functions. These values have been listed in `population.txt`.
+The database has been populated with some example values to demonstrate the working of functions. These values have been listed in `population.txt`.
 The data stored can be queried and updated through `mysql`, and the functional requirements given in the earlier phases have been implemented with python to provide a simple CLI-based menu interface to run the queries.
 
 **Instructions**
